@@ -9,15 +9,11 @@ public class CodiceFiscaleMain {
 
 	public static void main(String[] args) {
 		
-		final String filename = "inputPersone.xml";
+		Support support = new Support();
 		
-		XMLInputFactory xmlif = null;
-		XMLStreamReader xmlr = null;
-		Support support = new Support(filename);
+		support.getAllPersona();
 		
-		xmlif = XMLInputFactory.newInstance();
-		
-		xmlr = support.openFile(xmlif);
+		support.test();
 		
 		System.out.println("Tutto ok!");
 		
