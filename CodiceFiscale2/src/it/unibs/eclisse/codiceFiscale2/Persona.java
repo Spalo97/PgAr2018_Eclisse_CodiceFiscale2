@@ -13,6 +13,7 @@ public class Persona {
 		
 	}
 	
+	
 	public Persona(int id,String firstName,String lastName,char gender,String birthplace,String birthday) {
 		this.id=id;
 		this.nome=firstName;

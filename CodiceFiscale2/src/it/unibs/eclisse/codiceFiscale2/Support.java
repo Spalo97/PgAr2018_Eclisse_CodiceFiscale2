@@ -60,6 +60,7 @@ public class Support {
 						System.out.println("-> " + xmlr.getText());
 						break;
 					}
+				
 				xmlr.next();
 			}
 		} catch (XMLStreamException e) {
