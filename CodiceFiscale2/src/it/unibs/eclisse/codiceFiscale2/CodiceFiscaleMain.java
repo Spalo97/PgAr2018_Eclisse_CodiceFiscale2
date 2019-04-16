@@ -20,6 +20,7 @@ public class CodiceFiscaleMain {
 		xmlr = support.openFile(xmlif);
 		
 		System.out.println("Tutto ok!");
+		
 	}
 
 }
