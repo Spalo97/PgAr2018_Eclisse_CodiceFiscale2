@@ -278,7 +278,7 @@ public class Support {
 
 	public void generaXml() {
 		try {
-			xmlof = XMLinputFactory.newInstance();
+			xmlof = XMLInputFactory.newInstance();
 			xmlw = xmlof.createXMLStreamWriter(new FileOutputStream(output), "utf-8");
 			xmlw.writeStartDocument("utf-8", "1.0");
 		} catch (Exception e) {
@@ -342,7 +342,7 @@ public class Support {
 			}
 			xmlw.writeEndElement();
 			xmlw.writeStartElement("spaiati");
-			xmlw.writeAttribute("numero", spaiati.size());
+			xmlw.writeAttribute("numero", String.valueOf(spaiati.size()));
 			for (int i = 0; i< spaiati.size(); i++) {
 				xmlw.writeStartElement("codice");
 				xmlw.writeCharacters(spaiati.get(i));
