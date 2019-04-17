@@ -10,6 +10,7 @@ public class Persona {
 	private String data_nascita;
 	private String codice_fiscale;
 	
+	
 	public Persona() {
 		
 	}
