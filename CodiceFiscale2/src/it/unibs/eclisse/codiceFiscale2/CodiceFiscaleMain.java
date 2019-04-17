@@ -13,6 +13,10 @@ public class CodiceFiscaleMain {
 		
 		support.getAllPersona();
 		
+		//support.getAllCodici();
+		
+		support.getAllComuni();
+		
 		support.test();
 		
 		System.out.println("Tutto ok!");
