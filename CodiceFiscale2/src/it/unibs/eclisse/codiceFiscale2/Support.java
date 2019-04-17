@@ -147,121 +147,134 @@ public class Support {
 		System.out.println(c.getCodice());
 	}
 	
-	public void creacod(String nome, String cognome,String data , String comune, char sesso ){
-		int counter=0;
-		nome_cognome(cognome);
-		nome_cognome(nome);
-		data_nascita(data);
-		cod_data(anno, mese, giorno, sesso);
+
+	public static String creacod(String nome, String cognome,String data , String comune, String sesso ) {	
+		StringBuffer code = new StringBuffer(); 
+		code.append(nome_cognome(cognome));
+		code.append(nome_cognome(nome));
+		code.append(cod_anno(data));
+		code.append(cod_mese_giorno(data, sesso));
+		return code.toString().toUpperCase();
+		
 		
 	}
 	
-	public void nome_cognome(String dato){
+	public static char[] nome_cognome(String dato){
 		int i=0;
+		int n_lett=dato.length();
 		int counter=0;
+		char name[] =dato.toUpperCase().toCharArray();
+		char cod[]=new char[3];
 		do {
-			if(dato.substring(i) != "A" && dato.substring(i) != "E" && dato.substring(i) != "I" && dato.substring(i) != "O" && dato.substring(i) != "U" ) {
-				cod_fisc=cod_fisc+dato.substring(i);
+			if(name[i] != 'A' && name[i] != 'E' && name[i] != 'I' && name[i] != 'O' && name[i] != 'U' ) {
+				cod[counter]=name[i];
 				counter ++;
 			}
 			i++;
-		}while(counter<3 || i<dato.length());
+		}while(counter<3 && i<n_lett);
 		i=0;
 		if (counter<3) {
 			do {
-				if(dato.substring(i) == "A" && dato.substring(i) == "E" && dato.substring(i) == "I" && dato.substring(i) == "O" && dato.substring(i) == "U" ) {
-					cod_fisc=cod_fisc+dato.substring(i);
+				if(name[i] == 'A' && name[i] == 'E' && name[i] == 'I' && name[i] == '0' && name[i] == 'U' ) {
+					cod[counter]=name[i];
 					counter ++;
 				}
 				i++;
-			}while(counter<3 || i<dato.length());
+			}while((counter<3 && i<n_lett));
 		}
 		if(counter<3) {
 			do {
-				cod_fisc=cod_fisc+"X";
+				cod[counter]='X';
 				counter ++;
-			}while(counter<3);
+			}while(counter<3
+					);
 		}
+		return cod;
 	}
 	
-	
-	public void data_nascita(String data) {
 
-		anno=Integer.parseInt(data.substring(0, 4));
-		mese=Integer.parseInt(data.substring(6, 7));
-		giorno=anno=Integer.parseInt(data.substring(9, 10));
+	
+	public static char[] cod_anno(String data) {
+		char anno[] =data.toCharArray();
+		char cod[]=new char[2];
+		cod[0]=anno[2];
+		cod[1]=anno[3];
+		return cod;
 	}
 	
-	public void cod_data(int anno, int mese, int giorno, char sesso) {
-		int anno2c=anno%100;
+	public  static StringBuffer cod_mese_giorno(String data, String sesso) {
+		
+		int mese=Integer.parseInt(data.substring(5, 7));
+		int giorno=Integer.parseInt(data.substring(8, 10));
+		StringBuffer cod = new StringBuffer();
+		
+		
+		
 		int giornilimite;
-		//aggiunta dello 0 davanti ai numeri <10, Es: nati nel 2000
-		
-		
 		switch(mese){
 		case 1:
-			cod_fisc=cod_fisc+"A";;
+			;
+			cod.append('A');
 			giornilimite=31;
 			break;
 		case 2:
-			cod_fisc=cod_fisc+"B";
+			cod.append('B');
 			giornilimite=28;
 			break;
 		case 3:
-			cod_fisc=cod_fisc+"C";
+			cod.append('C');
 			giornilimite=31;
 			break;
 		case 4:
-			cod_fisc=cod_fisc+"D";
+			cod.append('D');
 			giornilimite=30;
 			break;
 		case 5:
-			cod_fisc=cod_fisc+"E";
+			cod.append('E');
 			giornilimite=31;
 			break;
 		case 6:
-			cod_fisc=cod_fisc+"H";
+			cod.append('H');
 			giornilimite=30;
 			break;
 		case 7:
-			cod_fisc=cod_fisc+"L";
+			cod.append('L');
 			giornilimite=31;
 			break;
 		case 8:
-			cod_fisc=cod_fisc+"M";
+			cod.append('M');
 			giornilimite=31;
 			break;
 		case 9:
-			cod_fisc=cod_fisc+"P";
+			cod.append('P');
 			giornilimite=30;
 			break;
 		case 10:
-			cod_fisc=cod_fisc+"R";
+			cod.append('R');
 			giornilimite=31;
 			break;
 		case 11:
-			cod_fisc=cod_fisc+"S";
+			cod.append('S');
 			giornilimite=30;
 			break;
 		case 12:
-			cod_fisc=cod_fisc+"T";
+			cod.append('T');
 			giornilimite=31;
 			break;
 		default:
-			cod_fisc=cod_fisc+"";
+			giornilimite=0;
 			break;
 		}
-		if (sesso == 'F') {
-			giornilimite=+40;
-			if(giorno>giornilimite) {
-				//errore
-			} else cod_fisc=cod_fisc+(giorno+40);		
+		if (sesso.toUpperCase() == "F") {
+			giornilimite=giornilimite+40;
+			giorno=giorno+40;
 		}
-		else {
-			if(giorno>giornilimite) {
-				//errore
-			} else cod_fisc=cod_fisc+giorno;
-		}	
+		if(giorno<giornilimite) {
+			cod.append(giorno);
+			
+		}
+		
+		return cod;
 	}
 
 	public void generaXml() {
