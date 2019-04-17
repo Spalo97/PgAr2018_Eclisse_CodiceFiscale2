@@ -147,9 +147,8 @@ public class Support {
 		code.append(cod_anno(data));
 		code.append(cod_mese_giorno(data, sesso));
 		code.append(cod_com(comune));
-		return code.toString().toUpperCase();
-		
-		
+		code.append(car_controllo(code.toString()));
+		return code.toString().toUpperCase();		
 	}
 	
 	public static char[] nome_cognome(String dato){
@@ -281,6 +280,124 @@ public class Support {
 		return cod;
 	}
 
+	public String car_controllo(String code) {
+		char cod[] =code.toUpperCase().toCharArray();
+		int somma=0;
+		int controllo;
+		String cod_contr = null;
+		for(int i=0, n=1; i<15; i++, n++){
+			if (n%2==0) {
+				switch (cod[i]) {
+				case '0': {somma+=0;break;}
+				case '1': {somma+=1;break;}
+				case '2': {somma+=2;break;}
+				case '3': {somma+=3;break;}
+				case '4': {somma+=4;break;}
+				case '5': {somma+=5;break;}
+				case '6': {somma+=6;break;}
+				case '7': {somma+=7;break;}
+				case '8': {somma+=8;break;}
+				case '9': {somma+=9;break;}
+				case 'A': {somma+=0;break;}
+				case 'B': {somma+=1;break;}
+				case 'C': {somma+=2;break;}
+				case 'D': {somma+=3;break;}
+				case 'E': {somma+=4;break;}
+				case 'F': {somma+=5;break;}
+				case 'G': {somma+=6;break;}
+				case 'H': {somma+=7;break;}
+				case 'I': {somma+=8;break;}
+				case 'J': {somma+=9;break;}
+				case 'K': {somma+=10;break;}
+				case 'L': {somma+=11;break;}
+				case 'M': {somma+=12;break;}
+				case 'N': {somma+=13;break;}
+				case 'O': {somma+=14;break;}
+				case 'P': {somma+=15;break;}
+				case 'Q': {somma+=16;break;}
+				case 'R': {somma+=17;break;}
+				case 'S': {somma+=18;break;}
+				case 'T': {somma+=19;break;}
+				case 'U': {somma+=20;break;}
+				case 'V': {somma+=21;break;}
+				case 'W': {somma+=22;break;}
+				case 'X': {somma+=23;break;}
+				case 'Y': {somma+=24;break;}
+				case 'Z': {somma+=25;break;}	
+				}
+			}else {
+				switch (cod[i]) {
+				case '0': {somma+=1;break;}
+				case '1': {somma+=0;break;}
+				case '2': {somma+=5;break;}
+				case '3': {somma+=7;break;}
+				case '4': {somma+=9;break;}
+				case '5': {somma+=13;break;}
+				case '6': {somma+=15;break;}
+				case '7': {somma+=17;break;}
+				case '8': {somma+=19;break;}
+				case '9': {somma+=21;break;}
+				case 'A': {somma+=1;break;}
+				case 'B': {somma+=0;break;}
+				case 'C': {somma+=5;break;}
+				case 'D': {somma+=7;break;}
+				case 'E': {somma+=9;break;}
+				case 'F': {somma+=13;break;}
+				case 'G': {somma+=15;break;}
+				case 'H': {somma+=17;break;}
+				case 'I': {somma+=19;break;}
+				case 'J': {somma+=21;break;}
+				case 'K': {somma+=2;break;}
+				case 'L': {somma+=4;break;}
+				case 'M': {somma+=18;break;}
+				case 'N': {somma+=20;break;}
+				case 'O': {somma+=11;break;}
+				case 'P': {somma+=3;break;}
+				case 'Q': {somma+=6;break;}
+				case 'R': {somma+=8;break;}
+				case 'S': {somma+=12;break;}
+				case 'T': {somma+=14;break;}
+				case 'U': {somma+=16;break;}
+				case 'V': {somma+=10;break;}
+				case 'W': {somma+=22;break;}
+				case 'X': {somma+=25;break;}
+				case 'Y': {somma+=24;break;}
+				case 'Z': {somma+=23;break;}
+				}
+			}
+			
+		}
+		controllo=somma%26;
+		switch(controllo) {
+			case 0:{cod_contr="A";break;}
+			case 1:{cod_contr="B";break;}
+			case 2:{cod_contr="C";break;}
+			case 3:{cod_contr="D";break;}
+			case 4:{cod_contr="E";break;}
+			case 5:{cod_contr="F";break;}
+			case 6:{cod_contr="G";break;}
+			case 7:{cod_contr="H";break;}
+			case 8:{cod_contr="I";break;}
+			case 9:{cod_contr="J";break;}
+			case 10:{cod_contr="K";break;}
+			case 11:{cod_contr="L";break;}
+			case 12:{cod_contr="M";break;}
+			case 13:{cod_contr="N";break;}
+			case 14:{cod_contr="O";break;}
+			case 15:{cod_contr="P";break;}
+			case 16:{cod_contr="Q";break;}
+			case 17:{cod_contr="R";break;}
+			case 18:{cod_contr="S";break;}
+			case 19:{cod_contr="T";break;}
+			case 20:{cod_contr="U";break;}
+			case 21:{cod_contr="V";break;}
+			case 22:{cod_contr="W";break;}
+			case 23:{cod_contr="X";break;}
+			case 24:{cod_contr="Y";break;}
+			case 25:{cod_contr="Z";break;}
+		}
+		return cod_contr;
+	}
 	public void generaXml() {
 		try {
 			xmlof = XMLOutputFactory.newInstance();
@@ -370,7 +487,7 @@ public class Support {
         for (int i = 0; i < codiciImportati.size(); i++) {
             ctrl = true;
             for (int j = 0; j < persone.size(); j++) {
-                if (codiciImportati.get(i)==persone.get(j).getCodice_fiscale()) {
+               if (codiciImportati.get(i)==persone.get(j).getCodice_fiscale()) {
                     ctrl = false;
                     break;
                 }
@@ -381,13 +498,13 @@ public class Support {
         }
     }
 
-	public void calcolaInvalidi() {
+	/*public void calcolaInvalidi() {
 	    for (int i = 0; i < codiciImportati.size(); i++){
 	        if (isInvalido(codiciImportati.get(i))){
 	            invalidi.add(codiciImportati.get(i));
                 codiciImportati.remove(i);
             }
         }
-    }
+    }*/
 
 }
