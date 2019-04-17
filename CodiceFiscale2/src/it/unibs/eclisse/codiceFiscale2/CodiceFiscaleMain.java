@@ -13,7 +13,7 @@ public class CodiceFiscaleMain {
 		
 		support.getAllPersona();
 		
-		//support.getAllCodici();
+		support.getAllCodici();
 		
 		support.getAllComuni();
 		

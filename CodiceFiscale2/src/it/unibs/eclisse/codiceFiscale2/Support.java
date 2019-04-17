@@ -90,9 +90,9 @@ public class Support {
 			xmlr = xmlif.createXMLStreamReader(fileCodici, new FileInputStream(fileCodici));
 			
 			while (xmlr.hasNext()) {								
-				if(xmlr.getEventType()==XMLStreamConstants.CHARACTERS) {
-					
-					System.out.println(xmlr.getText());
+				if(xmlr.getEventType()==XMLStreamConstants.START_ELEMENT) {		//perché se uso CHARACTERS e getText() mi crea righe di spazi vuoti?
+					if(xmlr.getLocalName()=="codice")							//perché se non uso getLocalName non posso fare getElementtext?
+						codiciImportati.add(xmlr.getElementText());
 				}
 				xmlr.next();
 				}
@@ -132,19 +132,10 @@ public class Support {
 	}
 	
 	public void test() {
-		int i=(int) (Math.random()*1000);
-		Persona p=persone.get(i);
-		System.out.println(p.getId());
-		System.out.println(p.getNome());
-		System.out.println(p.getCognome());
-		System.out.println(p.getSesso());
-		System.out.println(p.getComune_nascita());
-		System.out.println(p.getData_nascita());
-		
-		int j=(int) (Math.random()*20);
-		Comune c=comuni.get(j);
-		System.out.println(c.getNome());
-		System.out.println(c.getCodice());
+		System.out.println(persone.size());
+		System.out.println(codiciImportati.size());
+		System.out.println(comuni.size());
+
 	}
 	
 
