@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import javax.xml.stream.*;
 
+import test_p.Comune;
+
 public class Support {
 	
 	private String filePersone="inputPersone.xml";
@@ -147,12 +149,13 @@ public class Support {
 	}
 	
 
-	public static String creacod(String nome, String cognome,String data , String comune, String sesso ) {	
+	public String creacod(String nome, String cognome,String data , String comune, String sesso ) {	
 		StringBuffer code = new StringBuffer(); 
 		code.append(nome_cognome(cognome));
 		code.append(nome_cognome(nome));
 		code.append(cod_anno(data));
 		code.append(cod_mese_giorno(data, sesso));
+		code.append(cod_com(comune));
 		return code.toString().toUpperCase();
 		
 		
@@ -273,6 +276,17 @@ public class Support {
 			
 		}
 		
+		return cod;
+	}
+	
+	public  StringBuffer cod_com(String com){
+		StringBuffer cod=new StringBuffer();
+		for(Comune c:comuni) {
+			if (c.getNome().equals(com)) {
+				cod.append(c.getCodice());
+				return cod;
+			}
+		}
 		return cod;
 	}
 
