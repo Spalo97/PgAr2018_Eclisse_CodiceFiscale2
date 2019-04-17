@@ -1,23 +1,26 @@
 package it.unibs.eclisse.codiceFiscale2;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.*;
 
 public class Support {
 	
 	private String filePersone="inputPersone.xml";
 	private String fileCodici="codiciFiscali.xml";
 	private String fileComuni="comuni.xml";
+	private String output = "codiciPersone.xml";
 	private XMLInputFactory xmlif = null;
 	private XMLStreamReader xmlr = null;
+	private XMLOutputFactory xmlof = null;
+	private XMLStreamWriter xmlw = null;
 	private ArrayList<Persona> persone = new ArrayList();
 	private ArrayList<String> invalidi = new ArrayList();
-	//private ArrayList<String> spaiati = new ArrayList();
+	private ArrayList<String> spaiati = new ArrayList();
 	private LinkedList<String> codiciImportati = new LinkedList(); //utilizzata anche per spaiati, Lange toglie invalidi e li mette in altro array, Nick toglie i validi e restano spaiati!
 	
 	private int id;
@@ -30,7 +33,7 @@ public class Support {
 	private int mese;
 	private int giorno;
 	private String cod_fisc;
- 	
+
 	private Persona p=new Persona();
 	
 	public Support(){
@@ -92,7 +95,7 @@ public class Support {
 				xmlr.next();
 			}
 		} catch (XMLStreamException e) {
-			System.out.println("Errore nella lettura del file " + filename);
+			System.out.println("Errore nella lettura del file " + filePersone);
 			System.out.println(e.getMessage());
 		}
 	}
@@ -127,7 +130,7 @@ public class Support {
 				xmlr.next();
 			}
 		} catch (XMLStreamException e) {
-			System.out.println("Errore nella lettura del file " + filename);
+			System.out.println("Errore nella lettura del file " + fileCodici);
 			System.out.println(e.getMessage());
 		}
 	}
@@ -259,8 +262,8 @@ public class Support {
 	public void generaXml() {
 		try {
 			xmlof = XMLInputFactory.newInstance();
-			xmlw = xmlof.createXMLStreamWriter(new FileOutputStream(codiciPersone.xml), “utf - 8”);
-			xmlw.writeStartDocument(“utf - 8”, “ 1.0”);
+			xmlw = xmlof.createXMLStreamWriter(new FileOutputStream(output), "utf-8");
+			xmlw.writeStartDocument("utf-8", "1.0");
 		} catch (Exception e) {
 			System.out.println("Errore nell'inizializzazione del writer:");
 			System.out.println(e.getMessage());
@@ -270,8 +273,8 @@ public class Support {
 			xmlw.writeStartElement("output");
 			xmlw.writeComment("INIZIO LISTA");
 			xmlw.writeStartElement("persone");
-			xmlw.writeAttribute("numero", persone.lenght());
-			for (int i = 0; i < persone.lenght(); i++) {
+			xmlw.writeAttribute("numero", persone.size());
+			for (int i = 0; i < persone.size(); i++) {
 				xmlw.writeStartElement("persona");
 				xmlw.writeAttribute("id", persone.get(i).getId());
 
@@ -304,17 +307,17 @@ public class Support {
 			xmlw.writeEndElement();
 			xmlw.writeStartElement("codici");
 			xmlw.writeStartElement("invalidi");
-			xmlw.writeAttribute("numero", invalidi.lenght());
-			for (int i = 0; i< invalidi.lenght(); i++) {
-				xmlw.writeElement("codice");
+			xmlw.writeAttribute("numero", invalidi.size());
+			for (int i = 0; i< invalidi.size(); i++) {
+				xmlw.writeStartElement("codice");
 				xmlw.writeCharacters(invalidi.get(i));
 				xmlw.writeEndElement();
 			}
 			xmlw.writeEndElement();
 			xmlw.writeStartElement("spaiati");
-			xmlw.writeAttribute("numero", spaiati.lenght());
-			for (int i = 0; i< spaiati.lenght(); i++) {
-				xmlw.writeElement("codice");
+			xmlw.writeAttribute("numero", spaiati.size());
+			for (int i = 0; i< spaiati.size(); i++) {
+				xmlw.writeStartElement("codice");
 				xmlw.writeCharacters(spaiati.get(i));
 				xmlw.writeEndElement();
 			}
