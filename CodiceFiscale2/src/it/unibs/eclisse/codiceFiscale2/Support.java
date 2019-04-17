@@ -7,45 +7,31 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import javax.xml.stream.*;
 
-import test_p.Comune;
-
 public class Support {
 	
 	private String filePersone="inputPersone.xml";
 	private String fileCodici="codiciFiscali.xml";
 	private String fileComuni="comuni.xml";
 	private String output = "codiciPersone.xml";
+	
 	private XMLInputFactory xmlif = null;
 	private XMLStreamReader xmlr = null;
 	private XMLOutputFactory xmlof = null;
 	private XMLStreamWriter xmlw = null;
+	
 	private ArrayList<Persona> persone = new ArrayList();
 	private ArrayList<Comune> comuni = new ArrayList();
 	private ArrayList<String> invalidi = new ArrayList();
 	private ArrayList<String> spaiati = new ArrayList();
-	private LinkedList<String> codiciImportati = new LinkedList(); //utilizzata anche per spaiati, Lange toglie invalidi e li mette in altro array, Nick toglie i validi e restano spaiati!
-	
-	
+	private LinkedList<String> codiciImportati = new LinkedList();
+		
 	private int anno;
 	private int mese;
 	private int giorno;
 	
 	public Support(){
 	}
-	
-	/*public XMLStreamReader openFile(XMLInputFactory xmlif) {
-		
-		try {
-			xmlif = XMLInputFactory.newInstance();
-			xmlr = xmlif.createXMLStreamReader(filePersone, new FileInputStream(filePersone));
-		} catch (Exception e) {
-			System.out.println("Errore nell'inizializzazione del reader:");
-			System.out.println(e.getMessage());
-		}
-		
-		return this.xmlr;
-	}*/
-	
+
 	public void getAllPersona() {
 		
 		try {
@@ -131,25 +117,19 @@ public class Support {
 			System.out.println(e.getMessage());
 		}
 	}
-	
-	public void test() {
-		System.out.println(persone.size());
-		System.out.println(codiciImportati.size());
-		System.out.println(comuni.size());
 
-	}
-	
-
-	public String creacod(String nome, String cognome,String data , String comune, String sesso ) {	
-		StringBuffer code = new StringBuffer(); 
-		code.append(nome_cognome(cognome));
-		code.append(nome_cognome(nome));
-		code.append(cod_anno(data));
-		code.append(cod_mese_giorno(data, sesso));
-		code.append(cod_com(comune));
-		code.append(car_controllo(code.toString()));
-		return code.toString().toUpperCase();		
-
+	public void creacod() {
+		
+		for(int i=0;i<persone.size();i++) {
+			StringBuffer code = new StringBuffer(); 
+			code.append(nome_cognome(persone.get(i).getCognome()));	
+			code.append(nome_cognome(persone.get(i).getNome()));	
+			code.append(cod_anno(persone.get(i).getData_nascita()));
+			code.append(cod_mese_giorno(persone.get(i).getData_nascita(), persone.get(i).getSesso()));
+			code.append(cod_com(persone.get(i).getComune_nascita()));
+			code.append(car_controllo(code.toString()));
+			persone.get(i).setCodice_fiscale(code.toString().toUpperCase());
+		}
 	}
 	
 	public static char[] nome_cognome(String dato){
@@ -158,29 +138,29 @@ public class Support {
 		int counter=0;
 		char name[] =dato.toUpperCase().toCharArray();
 		char cod[]=new char[3];
-		do {
+		while(counter<3 && i<n_lett){
 			if(name[i] != 'A' && name[i] != 'E' && name[i] != 'I' && name[i] != 'O' && name[i] != 'U' ) {
 				cod[counter]=name[i];
 				counter ++;
 			}
 			i++;
-		}while(counter<3 && i<n_lett);
+		}
 		i=0;
 		if (counter<3) {
-			do {
-				if(name[i] == 'A' && name[i] == 'E' && name[i] == 'I' && name[i] == '0' && name[i] == 'U' ) {
+			while((counter<3 && i<n_lett)) {
+				if(name[i] == 'A' || name[i] == 'E' || name[i] == 'I' || name[i] == '0' || name[i] == 'U' ) {
 					cod[counter]=name[i];
 					counter ++;
 				}
 				i++;
-			}while((counter<3 && i<n_lett));
+			}
 		}
+		
 		if(counter<3) {
-			do {
+			while(counter<3) {
 				cod[counter]='X';
 				counter ++;
-			}while(counter<3
-					);
+			}
 		}
 		return cod;
 	}
@@ -193,14 +173,12 @@ public class Support {
 		return cod;
 	}
 	
-	public  static StringBuffer cod_mese_giorno(String data, String sesso) {
+public  static StringBuffer cod_mese_giorno(String data, String sesso) {
 		
+		int anno=Integer.parseInt(data.substring(0, 4));
 		int mese=Integer.parseInt(data.substring(5, 7));
 		int giorno=Integer.parseInt(data.substring(8, 10));
 		StringBuffer cod = new StringBuffer();
-		
-		
-		
 		int giornilimite;
 		switch(mese){
 		case 1:
@@ -210,7 +188,11 @@ public class Support {
 			break;
 		case 2:
 			cod.append('B');
-			giornilimite=28;
+			if(anno%4==0) {
+				giornilimite=29;
+			}else {
+				giornilimite=28;
+			}
 			break;
 		case 3:
 			cod.append('C');
@@ -256,26 +238,32 @@ public class Support {
 			giornilimite=0;
 			break;
 		}
-		if (sesso.toUpperCase() == "F") {
+		if (sesso.equals("F")) {
 			giornilimite=giornilimite+40;
 			giorno=giorno+40;
 		}
-		if(giorno<giornilimite) {
-			cod.append(giorno);
-			
+		if(giorno<=giornilimite) {
+			if(giorno<10) {
+				cod.append(0);
+				cod.append(giorno);
+			}else {
+				cod.append(giorno);
+			}
 		}
-		
 		return cod;
 	}
 	
 	public  StringBuffer cod_com(String com){
 		StringBuffer cod=new StringBuffer();
-		for(Comune c:comuni) {
-			if (c.getNome().equals(com)) {
-				cod.append(c.getCodice());
+		for(int i=0; i<comuni.size(); i++) {
+			
+			if (comuni.get(i).getNome().equals(com)) {
+				cod.append(comuni.get(i).getCodice());
 				return cod;
 			}
 		}
+		
+		System.out.println(cod);
 		return cod;
 	}
 
@@ -403,12 +391,7 @@ public class Support {
 			xmlof = XMLOutputFactory.newInstance();
 			xmlw = xmlof.createXMLStreamWriter(new FileOutputStream(output), "utf-8");
 			xmlw.writeStartDocument("utf-8", "1.0");
-		} catch (Exception e) {
-			System.out.println("Errore nell'inizializzazione del writer:");
-			System.out.println(e.getMessage());
-		}
 
-		try {
 			xmlw.writeStartElement("output");
 			xmlw.writeComment("INIZIO LISTA");
 			xmlw.writeStartElement("persone");
@@ -451,7 +434,7 @@ public class Support {
                     xmlw.writeCharacters("ASSENTE");
 				}
 				xmlw.writeEndElement();
-				xmlw.writeEndElement();
+				xmlw.writeEndElement();//persona
 			}
 
 			xmlw.writeStartElement("codici");

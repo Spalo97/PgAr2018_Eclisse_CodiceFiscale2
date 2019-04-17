@@ -17,7 +17,13 @@ public class CodiceFiscaleMain {
 		
 		support.getAllComuni();
 		
-		support.test();
+		support.creacod();
+		
+		support.calcolaInvalidi();
+		
+		support.calcolaSpaiati();
+		
+		support.generaXml();
 		
 		System.out.println("Tutto ok!");
 		
