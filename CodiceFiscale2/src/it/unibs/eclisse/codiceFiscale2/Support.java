@@ -434,7 +434,7 @@ public  static StringBuffer cod_mese_giorno(String data, String sesso) {
 				boolean ctrl = true;
 				for (int j=0; j<codiciImportati.size(); j++) {
 				    ctrl = true;
-                    if (persone.get(i).getCodice_fiscale()==codiciImportati.get(j)) {
+                    if (persone.get(i).getCodice_fiscale().equals(codiciImportati.get(j))) {
                         xmlw.writeCharacters(persone.get(i).getCodice_fiscale());
                         ctrl = false;
                         break;
@@ -501,7 +501,7 @@ public  static StringBuffer cod_mese_giorno(String data, String sesso) {
         for (int i = 0; i < codiciImportati.size(); i++) {
             ctrl = true;
             for (int j = 0; j < persone.size(); j++) {
-               if (codiciImportati.get(i)==persone.get(j).getCodice_fiscale()) {
+               if (codiciImportati.get(i).equals(persone.get(j).getCodice_fiscale())) {
                     ctrl = false;
                     break;
                 }
