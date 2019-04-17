@@ -149,6 +149,7 @@ public class Support {
 		code.append(cod_com(comune));
 		code.append(car_controllo(code.toString()));
 		return code.toString().toUpperCase();		
+
 	}
 	
 	public static char[] nome_cognome(String dato){
@@ -183,8 +184,6 @@ public class Support {
 		}
 		return cod;
 	}
-	
-
 	
 	public static char[] cod_anno(String data) {
 		char anno[] =data.toCharArray();
@@ -398,6 +397,7 @@ public class Support {
 		}
 		return cod_contr;
 	}
+	
 	public void generaXml() {
 		try {
 			xmlof = XMLOutputFactory.newInstance();
@@ -498,13 +498,97 @@ public class Support {
         }
     }
 
-	/*public void calcolaInvalidi() {
+	public void calcolaInvalidi() {
 	    for (int i = 0; i < codiciImportati.size(); i++){
 	        if (isInvalido(codiciImportati.get(i))){
 	            invalidi.add(codiciImportati.get(i));
                 codiciImportati.remove(i);
             }
         }
-    }*/
+    }
+	
+	public boolean isInvalido(String codice){
+		if (codice.length()!=16) {
+			return true;
+		}
+		int giorno=Integer.parseInt(codice.substring(9, 11));
+		String mese=codice.substring(8, 9);
+		String cod_comune=codice.substring(11, 15);
+		char cod[]= codice.toCharArray();
+		int i;
+		for(i=0;i<6;i++) {
+			if(cod[i]<'a' && cod[i]>'Z') {
+				return true;
+			}
+		}
+		for(i=7;i<9;i++) {
+			if (cod[i]>='a' && cod[i]<='Z') {
+				return true;
+			}
+		}
+		
+		int giornilimite;
+		switch(mese){
+			case "A":
+				giornilimite=31;
+				break;
+			case "B":
+				giornilimite=28;
+				break;
+			case "C":
+				giornilimite=31;
+				break;
+			case "D":
+				giornilimite=30;
+				break;
+			case "E":
+				giornilimite=31;
+				break;
+			case "H":
+				giornilimite=30;
+				break;
+			case "L":
+				giornilimite=31;
+				break;
+			case "M":
+				giornilimite=31;
+				break;
+			case "P":
+				giornilimite=30;
+				break;
+			case "R":
+				giornilimite=31;
+				break;
+			case "S":
+				giornilimite=30;
+				break;
+			case "T":
+				giornilimite=31;
+				break;
+			default:
+				giornilimite=0;
+				return true;
+				
+			}
+		giorno=giorno+40;
+		giornilimite=giornilimite+40;
+		if (giorno>giornilimite) {
+			return true;
+		}
+		int verifica=0;
+		for(Comune c:comuni) {
+			if (c.getCodice().equals(cod_comune)) {
+				verifica=1;
+			}
+		}
+		if (verifica==0) {
+			return true;
+		}
+		if (codice.substring(15).equals(car_controllo(codice))) {
+			return false;
+		}else {
+			return true;
+		}
+	}
+}	
 
-}

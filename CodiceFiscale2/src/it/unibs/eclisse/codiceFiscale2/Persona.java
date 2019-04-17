@@ -11,6 +11,14 @@ public class Persona {
 	private String codice_fiscale;
 	
 	
+	public String getCodice_fiscale() {
+		return codice_fiscale;
+	}
+
+	public void setCodice_fiscale(String codice_fiscale) {
+		this.codice_fiscale = codice_fiscale;
+	}
+
 	public Persona() {
 		
 	}
@@ -62,4 +70,5 @@ public class Persona {
 	public void setData_nascita(String data_nascita) {
 		this.data_nascita = data_nascita;
 	}
+
 }
