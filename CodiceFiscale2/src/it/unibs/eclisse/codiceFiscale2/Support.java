@@ -278,7 +278,7 @@ public class Support {
 
 	public void generaXml() {
 		try {
-			xmlof = XMLInputFactory.newInstance();
+			xmlof = XMLOutputFactory.newInstance();
 			xmlw = xmlof.createXMLStreamWriter(new FileOutputStream(output), "utf-8");
 			xmlw.writeStartDocument("utf-8", "1.0");
 		} catch (Exception e) {
