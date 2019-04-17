@@ -2,22 +2,23 @@ package it.unibs.eclisse.codiceFiscale2;
 
 public class Persona {
 	
-	private int id;
+	private String id;
 	private String nome;
 	private String cognome;
 	private String sesso;
 	private String comune_nascita;
 	private String data_nascita;
+	private String codice_fiscale;
 	
 	public Persona() {
 		
 	}
 	
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
