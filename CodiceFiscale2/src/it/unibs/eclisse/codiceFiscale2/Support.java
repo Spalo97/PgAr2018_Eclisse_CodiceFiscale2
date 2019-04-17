@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
+
 import javax.xml.stream.*;
 
 public class Support {
@@ -387,39 +388,48 @@ public  static StringBuffer cod_mese_giorno(String data, String sesso) {
 	}
 	
 	public void generaXml() {
+		
+		int depth=0;
+		
 		try {
 			xmlof = XMLOutputFactory.newInstance();
 			xmlw = xmlof.createXMLStreamWriter(new FileOutputStream(output), "utf-8");
-			xmlw.writeStartDocument("utf-8", "1.0");
-
+			xmlw.writeStartDocument("UTF-8", "1.0");
+			addDepth(xmlw,depth);
 			xmlw.writeStartElement("output");
+			depth++;
 			xmlw.writeComment("INIZIO LISTA");
+			addDepth(xmlw,depth);
 			xmlw.writeStartElement("persone");
+			depth++;
 			xmlw.writeAttribute("numero", String.valueOf(persone.size()));
 			for (int i = 0; i < persone.size(); i++) {
+				addDepth(xmlw,depth);
 				xmlw.writeStartElement("persona");
+				depth++;
 				xmlw.writeAttribute("id", String.valueOf(persone.get(i).getId()));
+				addDepth(xmlw,depth);
 
 				xmlw.writeStartElement("nome");
 				xmlw.writeCharacters(persone.get(i).getNome());
 				xmlw.writeEndElement();
-
+				addDepth(xmlw,depth);
 				xmlw.writeStartElement("cognome");
 				xmlw.writeCharacters(persone.get(i).getCognome());
 				xmlw.writeEndElement();
-
+				addDepth(xmlw,depth);
 				xmlw.writeStartElement("sesso");
 				xmlw.writeCharacters(persone.get(i).getSesso());
 				xmlw.writeEndElement();
-
+				addDepth(xmlw,depth);
 				xmlw.writeStartElement("comune_nascita");
 				xmlw.writeCharacters(persone.get(i).getComune_nascita());
 				xmlw.writeEndElement();
-
+				addDepth(xmlw,depth);
 				xmlw.writeStartElement("data_nascita");
 				xmlw.writeCharacters(persone.get(i).getData_nascita());
 				xmlw.writeEndElement();
-
+				addDepth(xmlw,depth);
 				xmlw.writeStartElement("codice_fiscale");
 				boolean ctrl = true;
 				for (int j=0; j<codiciImportati.size(); j++) {
@@ -434,27 +444,48 @@ public  static StringBuffer cod_mese_giorno(String data, String sesso) {
                     xmlw.writeCharacters("ASSENTE");
 				}
 				xmlw.writeEndElement();
-				xmlw.writeEndElement();//persona
+				depth--;
+				addDepth(xmlw,depth);
+				xmlw.writeEndElement();
+				addDepthClosePersona(xmlw,depth);
 			}
-
+			
+			depth--;
+			addDepth(xmlw,depth);
+			xmlw.writeEndElement();
+			addDepth(xmlw,depth);
 			xmlw.writeStartElement("codici");
+			depth++;
+			addDepth(xmlw,depth);
 			xmlw.writeStartElement("invalidi");
 			xmlw.writeAttribute("numero", String.valueOf(invalidi.size()));
+			depth++;
+			addDepth(xmlw,depth);
 			for (int i = 0; i< invalidi.size(); i++) {
 				xmlw.writeStartElement("codice");
 				xmlw.writeCharacters(invalidi.get(i));
 				xmlw.writeEndElement();
+				addDepth(xmlw,depth);
 			}
 			xmlw.writeEndElement();
+			depth--;
+			addDepth(xmlw,depth);
 			xmlw.writeStartElement("spaiati");
 			xmlw.writeAttribute("numero", String.valueOf(spaiati.size()));
+			depth++;
+			addDepth(xmlw,depth);
 			for (int i = 0; i< spaiati.size(); i++) {
 				xmlw.writeStartElement("codice");
 				xmlw.writeCharacters(spaiati.get(i));
 				xmlw.writeEndElement();
+				addDepth(xmlw,depth);
 			}
 			xmlw.writeEndElement();
+			depth--;
+			addDepth(xmlw,depth);
 			xmlw.writeEndElement();
+			depth--;
+			addDepth(xmlw,depth);
 			xmlw.writeEndElement();
 			xmlw.writeEndDocument();
 			xmlw.flush();
@@ -572,6 +603,30 @@ public  static StringBuffer cod_mese_giorno(String data, String sesso) {
 		}else {
 			return true;
 		}
+	}
+	
+	private void addDepth(XMLStreamWriter xmlw, int depth) {
+		try {
+			xmlw.writeCharacters("\n");
+			for(int x=0; x<depth; x++) {
+		   		xmlw.writeCharacters("    ");
+		   	}
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}
+	
+	private void addDepthClosePersona(XMLStreamWriter xmlw, int depth) {
+		try {
+			for(int x=0; x<depth; x++) {
+		   		xmlw.writeCharacters("    ");
+		   	}
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }	
 
