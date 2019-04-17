@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
-
 import javax.xml.stream.*;
 
 public class Support {
@@ -273,10 +272,10 @@ public class Support {
 			xmlw.writeStartElement("output");
 			xmlw.writeComment("INIZIO LISTA");
 			xmlw.writeStartElement("persone");
-			xmlw.writeAttribute("numero", persone.size());
+			xmlw.writeAttribute("numero", String.valueOf(persone.size()));
 			for (int i = 0; i < persone.size(); i++) {
 				xmlw.writeStartElement("persona");
-				xmlw.writeAttribute("id", persone.get(i).getId());
+				xmlw.writeAttribute("id", String.valueOf(persone.get(i).getId()));
 
 				xmlw.writeStartElement("nome");
 				xmlw.writeCharacters(persone.get(i).getNome());
@@ -299,15 +298,25 @@ public class Support {
 				xmlw.writeEndElement();
 
 				xmlw.writeStartElement("codice_fiscale");
-				xmlw.writeCharacters(persone.get(i).getCodice_fiscale());
+				boolean ctrl = true;
+				for (int j=0; j<codiciImportati.size(); j++) {
+				    ctrl = true;
+                    if (persone.get(i).getCodice_fiscale()==codiciImportati.get(j)) {
+                        xmlw.writeCharacters(persone.get(i).getCodice_fiscale());
+                        ctrl = false;
+                        break;
+                    }
+				}
+				if (ctrl) {
+                    xmlw.writeCharacters("ASSENTE");
+				}
 				xmlw.writeEndElement();
-
 				xmlw.writeEndElement();
 			}
-			xmlw.writeEndElement();
+
 			xmlw.writeStartElement("codici");
 			xmlw.writeStartElement("invalidi");
-			xmlw.writeAttribute("numero", invalidi.size());
+			xmlw.writeAttribute("numero", String.valueOf(invalidi.size()));
 			for (int i = 0; i< invalidi.size(); i++) {
 				xmlw.writeStartElement("codice");
 				xmlw.writeCharacters(invalidi.get(i));
@@ -323,6 +332,7 @@ public class Support {
 			}
 			xmlw.writeEndElement();
 			xmlw.writeEndElement();
+			xmlw.writeEndElement();
 			xmlw.writeEndDocument();
 			xmlw.flush();
 			xmlw.close();
@@ -331,5 +341,30 @@ public class Support {
 			System.out.println("Errore nella scrittura");
 		}
 	}
+
+	public void calcolaSpaiati() {
+    boolean ctrl = true;
+        for (int i = 0; i < codiciImportati.size(); i++) {
+            ctrl = true;
+            for (int j = 0; j < persone.size(); j++) {
+                if (codiciImportati.get(i)==persone.get(j).getCodice_fiscale()) {
+                    ctrl = false;
+                    break;
+                }
+            }
+            if (ctrl) {
+                spaiati.add(codiciImportati.get(i));
+            }
+        }
+    }
+
+	public void calcolaInvalidi() {
+	    for (int i = 0; i < codiciImportati.size(); i++){
+	        if (isInvalido(codiciImportati.get(i))){
+	            invalidi.add(codiciImportati.get(i));
+                codiciImportati.remove(i);
+            }
+        }
+    }
 
 }
