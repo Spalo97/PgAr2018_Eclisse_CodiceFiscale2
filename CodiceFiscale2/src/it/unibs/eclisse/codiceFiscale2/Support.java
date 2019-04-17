@@ -5,8 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
-
 import javax.xml.stream.*;
+
+import test_p.Comune;
 
 public class Support {
 	
@@ -139,12 +140,13 @@ public class Support {
 	}
 	
 
-	public static String creacod(String nome, String cognome,String data , String comune, String sesso ) {	
+	public String creacod(String nome, String cognome,String data , String comune, String sesso ) {	
 		StringBuffer code = new StringBuffer(); 
 		code.append(nome_cognome(cognome));
 		code.append(nome_cognome(nome));
 		code.append(cod_anno(data));
 		code.append(cod_mese_giorno(data, sesso));
+		code.append(cod_com(comune));
 		return code.toString().toUpperCase();
 		
 		
@@ -267,10 +269,21 @@ public class Support {
 		
 		return cod;
 	}
+	
+	public  StringBuffer cod_com(String com){
+		StringBuffer cod=new StringBuffer();
+		for(Comune c:comuni) {
+			if (c.getNome().equals(com)) {
+				cod.append(c.getCodice());
+				return cod;
+			}
+		}
+		return cod;
+	}
 
 	public void generaXml() {
 		try {
-			xmlof = XMLinputFactory.newInstance();
+			xmlof = XMLOutputFactory.newInstance();
 			xmlw = xmlof.createXMLStreamWriter(new FileOutputStream(output), "utf-8");
 			xmlw.writeStartDocument("utf-8", "1.0");
 		} catch (Exception e) {
@@ -282,10 +295,10 @@ public class Support {
 			xmlw.writeStartElement("output");
 			xmlw.writeComment("INIZIO LISTA");
 			xmlw.writeStartElement("persone");
-			xmlw.writeAttribute("numero", persone.size());
+			xmlw.writeAttribute("numero", String.valueOf(persone.size()));
 			for (int i = 0; i < persone.size(); i++) {
 				xmlw.writeStartElement("persona");
-				xmlw.writeAttribute("id", persone.get(i).getId());
+				xmlw.writeAttribute("id", String.valueOf(persone.get(i).getId()));
 
 				xmlw.writeStartElement("nome");
 				xmlw.writeCharacters(persone.get(i).getNome());
@@ -308,15 +321,25 @@ public class Support {
 				xmlw.writeEndElement();
 
 				xmlw.writeStartElement("codice_fiscale");
-				xmlw.writeCharacters(persone.get(i).getCodice_fiscale());
+				boolean ctrl = true;
+				for (int j=0; j<codiciImportati.size(); j++) {
+				    ctrl = true;
+                    if (persone.get(i).getCodice_fiscale()==codiciImportati.get(j)) {
+                        xmlw.writeCharacters(persone.get(i).getCodice_fiscale());
+                        ctrl = false;
+                        break;
+                    }
+				}
+				if (ctrl) {
+                    xmlw.writeCharacters("ASSENTE");
+				}
 				xmlw.writeEndElement();
-
 				xmlw.writeEndElement();
 			}
-			xmlw.writeEndElement();
+
 			xmlw.writeStartElement("codici");
 			xmlw.writeStartElement("invalidi");
-			xmlw.writeAttribute("numero", invalidi.size());
+			xmlw.writeAttribute("numero", String.valueOf(invalidi.size()));
 			for (int i = 0; i< invalidi.size(); i++) {
 				xmlw.writeStartElement("codice");
 				xmlw.writeCharacters(invalidi.get(i));
@@ -324,12 +347,13 @@ public class Support {
 			}
 			xmlw.writeEndElement();
 			xmlw.writeStartElement("spaiati");
-			xmlw.writeAttribute("numero", spaiati.size());
+			xmlw.writeAttribute("numero", String.valueOf(spaiati.size()));
 			for (int i = 0; i< spaiati.size(); i++) {
 				xmlw.writeStartElement("codice");
 				xmlw.writeCharacters(spaiati.get(i));
 				xmlw.writeEndElement();
 			}
+			xmlw.writeEndElement();
 			xmlw.writeEndElement();
 			xmlw.writeEndElement();
 			xmlw.writeEndDocument();
@@ -340,5 +364,30 @@ public class Support {
 			System.out.println("Errore nella scrittura");
 		}
 	}
+
+	public void calcolaSpaiati() {
+    boolean ctrl = true;
+        for (int i = 0; i < codiciImportati.size(); i++) {
+            ctrl = true;
+            for (int j = 0; j < persone.size(); j++) {
+                if (codiciImportati.get(i)==persone.get(j).getCodice_fiscale()) {
+                    ctrl = false;
+                    break;
+                }
+            }
+            if (ctrl) {
+                spaiati.add(codiciImportati.get(i));
+            }
+        }
+    }
+
+	public void calcolaInvalidi() {
+	    for (int i = 0; i < codiciImportati.size(); i++){
+	        if (isInvalido(codiciImportati.get(i))){
+	            invalidi.add(codiciImportati.get(i));
+                codiciImportati.remove(i);
+            }
+        }
+    }
 
 }
