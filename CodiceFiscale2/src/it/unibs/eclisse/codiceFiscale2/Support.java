@@ -19,24 +19,15 @@ public class Support {
 	private XMLOutputFactory xmlof = null;
 	private XMLStreamWriter xmlw = null;
 	private ArrayList<Persona> persone = new ArrayList();
+	private ArrayList<Comune> comuni = new ArrayList();
 	private ArrayList<String> invalidi = new ArrayList();
 	private ArrayList<String> spaiati = new ArrayList();
 	private LinkedList<String> codiciImportati = new LinkedList(); //utilizzata anche per spaiati, Lange toglie invalidi e li mette in altro array, Nick toglie i validi e restano spaiati!
 	
-	private int id;
-	private String nome;
-	private String cognome;
-	private char sesso;
-	private String comune_nascita;
-	private String data_nascita;
+	
 	private int anno;
 	private int mese;
 	private int giorno;
-	private String cod_fisc;
-	
-	private String tag;
-
-	private Persona p=new Persona();
 	
 	public Support(){
 	}
@@ -62,12 +53,12 @@ public class Support {
 			
 			while (xmlr.hasNext()) {								
 				if(xmlr.getEventType()==XMLStreamConstants.START_ELEMENT) {
-					if(xmlr.getLocalName()=="persona") {
+					switch(xmlr.getLocalName()) {
+					case "persona":
 						Persona p = new Persona();
 						persone.add(p);
 						persone.get(persone.size()-1).setId(xmlr.getAttributeValue(0));
-					}
-					switch(xmlr.getLocalName()) {
+						break;
 					case "nome":
 						persone.get(persone.size()-1).setNome(xmlr.getElementText());
 						break;
@@ -94,19 +85,67 @@ public class Support {
 	}
 	
 	public void getAllCodici() {
-		
+		try {
+			xmlif = XMLInputFactory.newInstance();
+			xmlr = xmlif.createXMLStreamReader(fileCodici, new FileInputStream(fileCodici));
+			
+			while (xmlr.hasNext()) {								
+				if(xmlr.getEventType()==XMLStreamConstants.CHARACTERS) {
+					
+					System.out.println(xmlr.getText());
+				}
+				xmlr.next();
+				}
+		} catch (Exception e) {
+			System.out.println("Errore nell'inizializzazione del reader:");
+			System.out.println(e.getMessage());
+		}
 	}
 	
-	/*public void test() {
+	public void getAllComuni() {
+		
+		try {
+			xmlif = XMLInputFactory.newInstance();
+			xmlr = xmlif.createXMLStreamReader(fileComuni, new FileInputStream(fileComuni));
+			
+			while (xmlr.hasNext()) {								
+				if(xmlr.getEventType()==XMLStreamConstants.START_ELEMENT) {
+					switch(xmlr.getLocalName()) {
+					case "comune":
+						Comune c = new Comune();
+						comuni.add(c);
+						break;
+					case "nome":
+						comuni.get(comuni.size()-1).setNome(xmlr.getElementText());
+						break;
+					case "codice":
+						comuni.get(comuni.size()-1).setCodice(xmlr.getElementText());
+						break;
+					}
+				}
+				xmlr.next();
+				}
+		} catch (Exception e) {
+			System.out.println("Errore nell'inizializzazione del reader:");
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	public void test() {
 		int i=(int) (Math.random()*1000);
-		Persona c=persone.get(i);
-		System.out.println(c.getId());
+		Persona p=persone.get(i);
+		System.out.println(p.getId());
+		System.out.println(p.getNome());
+		System.out.println(p.getCognome());
+		System.out.println(p.getSesso());
+		System.out.println(p.getComune_nascita());
+		System.out.println(p.getData_nascita());
+		
+		int j=(int) (Math.random()*20);
+		Comune c=comuni.get(j);
 		System.out.println(c.getNome());
-		System.out.println(c.getCognome());
-		System.out.println(c.getSesso());
-		System.out.println(c.getComune_nascita());
-		System.out.println(c.getData_nascita());
-	}*/
+		System.out.println(c.getCodice());
+	}
 	
 	public void creacod(String nome, String cognome,String data , String comune, char sesso ){
 		int counter=0;
@@ -227,7 +266,7 @@ public class Support {
 
 	public void generaXml() {
 		try {
-			xmlof = XMLInputFactory.newInstance();
+			xmlof = XMLinputFactory.newInstance();
 			xmlw = xmlof.createXMLStreamWriter(new FileOutputStream(output), "utf-8");
 			xmlw.writeStartDocument("utf-8", "1.0");
 		} catch (Exception e) {
