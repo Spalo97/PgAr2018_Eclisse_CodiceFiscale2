@@ -8,24 +8,24 @@ import javax.xml.stream.XMLStreamReader;
 public class CodiceFiscaleMain {
 
 	public static void main(String[] args) {
+
+		Support support = new Support(); //istanziamento oggetto di supporto
 		
-		Support support = new Support();
+		support.getAllPersona(); //prelievo dei dati delle persone
 		
-		support.getAllPersona();
+		support.getAllCodici(); //prelievo dei codici fiscali
 		
-		support.getAllCodici();
+		support.getAllComuni(); //prelievo dei comuni
 		
-		support.getAllComuni();
+		support.creacod(); //creazione dei codici fiscali
 		
-		support.creacod();
+		support.calcolaInvalidi(); //identificazione dei codici invalidi
 		
-		support.calcolaInvalidi();
+		support.calcolaSpaiati(); //identificazione dei codici spaiati
 		
-		support.calcolaSpaiati();
+		support.generaXml(); //creazione del file XML
 		
-		support.generaXml();
-		
-		System.out.println("Tutto ok!");
+		System.out.println("Tutto ok!"); //messaggio di conferma che l'operazione è andata a buon fine
 		
 	}
 

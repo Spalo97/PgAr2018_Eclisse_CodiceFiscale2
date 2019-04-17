@@ -9,38 +9,43 @@ import java.util.LinkedList;
 import javax.xml.stream.*;
 
 public class Support {
-	
+
+	//dichiarazione degli attributi riferiti ai file XML
 	private String filePersone="inputPersone.xml";
 	private String fileCodici="codiciFiscali.xml";
 	private String fileComuni="comuni.xml";
 	private String output = "codiciPersone.xml";
-	
+
+	// attributi utilizzati per lavorare con i file xml (lettura e scrittura)
 	private XMLInputFactory xmlif = null;
 	private XMLStreamReader xmlr = null;
 	private XMLOutputFactory xmlof = null;
 	private XMLStreamWriter xmlw = null;
 	
-	private ArrayList<Persona> persone = new ArrayList();
-	private ArrayList<Comune> comuni = new ArrayList();
-	private ArrayList<String> invalidi = new ArrayList();
-	private ArrayList<String> spaiati = new ArrayList();
-	private LinkedList<String> codiciImportati = new LinkedList();
-		
+	private ArrayList<Persona> persone = new ArrayList(); //dichiarazione dell'array contenete i dati delle persone
+	private ArrayList<Comune> comuni = new ArrayList(); //dichiarazione dell'array contenete i dati dei comuni
+	private ArrayList<String> invalidi = new ArrayList(); //dichiarazione dell'array contenete i codici fiscali invalidi
+	private ArrayList<String> spaiati = new ArrayList(); //dichiarazione dell'array contenete i codici fiscali spaiati
+	private LinkedList<String> codiciImportati = new LinkedList(); //dichiarazione dell'array contenete i codici fiscali importati
+
+	//dichiarazione degli attributi per la data
 	private int anno;
 	private int mese;
 	private int giorno;
-	
+
+	//costruttore dell'oggetto Support
 	public Support(){
 	}
 
+	//metodo per il prelievo dei dati persone
 	public void getAllPersona() {
 		
 		try {
-			xmlif = XMLInputFactory.newInstance();
-			xmlr = xmlif.createXMLStreamReader(filePersone, new FileInputStream(filePersone));
+			xmlif = XMLInputFactory.newInstance(); //si istanzia la variabile per la lettura dei dati
+			xmlr = xmlif.createXMLStreamReader(filePersone, new FileInputStream(filePersone)); //assegnamento del file da leggere alla variabile xmlr
 			
-			while (xmlr.hasNext()) {								
-				if(xmlr.getEventType()==XMLStreamConstants.START_ELEMENT) {
+			while (xmlr.hasNext()) {	//finche c'è da leggere, rimane nel loop
+				if(xmlr.getEventType()==XMLStreamConstants.START_ELEMENT) { //se viene letto la costante di inizio
 					switch(xmlr.getLocalName()) {
 					case "persona":
 						Persona p = new Persona();
@@ -71,7 +76,8 @@ public class Support {
 			System.out.println(e.getMessage());
 		}
 	}
-	
+
+	//metodo che preleva i codici dal file xml dei codici fiscali
 	public void getAllCodici() {
 		try {
 			xmlif = XMLInputFactory.newInstance();
@@ -79,7 +85,7 @@ public class Support {
 			
 			while (xmlr.hasNext()) {								
 				if(xmlr.getEventType()==XMLStreamConstants.START_ELEMENT) {		//perché se uso CHARACTERS e getText() mi crea righe di spazi vuoti?
-					if(xmlr.getLocalName()=="codice")							//perché se non uso getLocalName non posso fare getElementtext?
+					if(xmlr.getLocalName().equals("codice"))							//perché se non uso getLocalName non posso fare getElementtext?
 						codiciImportati.add(xmlr.getElementText());
 				}
 				xmlr.next();
@@ -89,7 +95,8 @@ public class Support {
 			System.out.println(e.getMessage());
 		}
 	}
-	
+
+	//metodo che preleva il nome del comune e il codice del comune dal file xml dei codici fiscali
 	public void getAllComuni() {
 		
 		try {
@@ -119,6 +126,8 @@ public class Support {
 		}
 	}
 
+
+	//metodo che crea una buffer di stringhe contenente il codice fiscale per ogni persona
 	public void creacod() {
 		
 		for(int i=0;i<persone.size();i++) {
@@ -132,7 +141,8 @@ public class Support {
 			persone.get(i).setCodice_fiscale(code.toString().toUpperCase());
 		}
 	}
-	
+
+	//metodo che crea il codice del nome e cognome da aggiungere al codice fiscale
 	public static char[] nome_cognome(String dato){
 		int i=0;
 		int n_lett=dato.length();
@@ -165,7 +175,8 @@ public class Support {
 		}
 		return cod;
 	}
-	
+
+	//metodo che crea il codice per l'anno da aggiungere al codice fiscale
 	public static char[] cod_anno(String data) {
 		char anno[] =data.toCharArray();
 		char cod[]=new char[2];
@@ -173,7 +184,8 @@ public class Support {
 		cod[1]=anno[3];
 		return cod;
 	}
-	
+
+	//metodo che crea il codice da aggiungere al codice fiscale per il mese e il giorno in base al sesso della persona
 public  static StringBuffer cod_mese_giorno(String data, String sesso) {
 		
 		int anno=Integer.parseInt(data.substring(0, 4));
@@ -253,7 +265,8 @@ public  static StringBuffer cod_mese_giorno(String data, String sesso) {
 		}
 		return cod;
 	}
-	
+
+	//metodo che crea il codice da aggiungere al codice fiscale del comune di nascita
 	public  StringBuffer cod_com(String com){
 		StringBuffer cod=new StringBuffer();
 		for(int i=0; i<comuni.size(); i++) {
@@ -268,6 +281,7 @@ public  static StringBuffer cod_mese_giorno(String data, String sesso) {
 		return cod;
 	}
 
+	//metodo che restituisce il codice di controllo del codice fiscale da aggiungere al codice fiscale
 	public String car_controllo(String code) {
 		char cod[] =code.toUpperCase().toCharArray();
 		int somma=0;
@@ -386,7 +400,8 @@ public  static StringBuffer cod_mese_giorno(String data, String sesso) {
 		}
 		return cod_contr;
 	}
-	
+
+	//metodo che si occupa della creazione del file XML
 	public void generaXml() {
 		
 		int depth=0;
@@ -496,6 +511,7 @@ public  static StringBuffer cod_mese_giorno(String data, String sesso) {
 		}
 	}
 
+	//metodo che controlla quali codici sono validi ma non corrispondono a nessuna persona
 	public void calcolaSpaiati() {
     boolean ctrl = true;
         for (int i = 0; i < codiciImportati.size(); i++) {
@@ -512,6 +528,7 @@ public  static StringBuffer cod_mese_giorno(String data, String sesso) {
         }
     }
 
+	//metodo che verifica quali codici non sono validi
 	public void calcolaInvalidi() {
 	    for (int i = 0; i < codiciImportati.size(); i++){
 	        if (isInvalido(codiciImportati.get(i))){
@@ -520,7 +537,8 @@ public  static StringBuffer cod_mese_giorno(String data, String sesso) {
             }
         }
     }
-	
+
+    //metdo che stabilisce se il codice dato è valido oppure no
 	public boolean isInvalido(String codice){
 		if (codice.length()!=16) {
 			return true;
@@ -604,7 +622,8 @@ public  static StringBuffer cod_mese_giorno(String data, String sesso) {
 			return true;
 		}
 	}
-	
+
+	//metodo utile per l'indentazione del file XML, aggiunge "a capo"
 	private void addDepth(XMLStreamWriter xmlw, int depth) {
 		try {
 			xmlw.writeCharacters("\n");
@@ -616,7 +635,8 @@ public  static StringBuffer cod_mese_giorno(String data, String sesso) {
 			e.printStackTrace();
 		}		
 	}
-	
+
+	//altro metodo utile per l'indentazione
 	private void addDepthClosePersona(XMLStreamWriter xmlw, int depth) {
 		try {
 			for(int x=0; x<depth; x++) {
