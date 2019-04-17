@@ -255,4 +255,78 @@ public class Support {
 			} else cod_fisc=cod_fisc+giorno;
 		}	
 	}
+
+	public void generaXml() {
+		try {
+			xmlof = XMLInputFactory.newInstance();
+			xmlw = xmlof.createXMLStreamWriter(new FileOutputStream(codiciPersone.xml), “utf - 8”);
+			xmlw.writeStartDocument(“utf - 8”, “ 1.0”);
+		} catch (Exception e) {
+			System.out.println("Errore nell'inizializzazione del writer:");
+			System.out.println(e.getMessage());
+		}
+
+		try {
+			xmlw.writeStartElement("output");
+			xmlw.writeComment("INIZIO LISTA");
+			xmlw.writeStartElement("persone");
+			xmlw.writeAttribute("numero", persone.lenght());
+			for (int i = 0; i < persone.lenght(); i++) {
+				xmlw.writeStartElement("persona");
+				xmlw.writeAttribute("id", persone.get(i).getId());
+
+				xmlw.writeStartElement("nome");
+				xmlw.writeCharacters(persone.get(i).getNome());
+				xmlw.writeEndElement();
+
+				xmlw.writeStartElement("cognome");
+				xmlw.writeCharacters(persone.get(i).getCognome());
+				xmlw.writeEndElement();
+
+				xmlw.writeStartElement("sesso");
+				xmlw.writeCharacters(persone.get(i).getSesso());
+				xmlw.writeEndElement();
+
+				xmlw.writeStartElement("comune_nascita");
+				xmlw.writeCharacters(persone.get(i).getComune_nascita());
+				xmlw.writeEndElement();
+
+				xmlw.writeStartElement("data_nascita");
+				xmlw.writeCharacters(persone.get(i).getData_nascita());
+				xmlw.writeEndElement();
+
+				xmlw.writeStartElement("codice_fiscale");
+				xmlw.writeCharacters(persone.get(i).getCodice_fiscale());
+				xmlw.writeEndElement();
+
+				xmlw.writeEndElement();
+			}
+			xmlw.writeEndElement();
+			xmlw.writeStartElement("codici");
+			xmlw.writeStartElement("invalidi");
+			xmlw.writeAttribute("numero", invalidi.lenght());
+			for (int i = 0; i< invalidi.lenght(); i++) {
+				xmlw.writeElement("codice");
+				xmlw.writeCharacters(invalidi.get(i));
+				xmlw.writeEndElement();
+			}
+			xmlw.writeEndElement();
+			xmlw.writeStartElement("spaiati");
+			xmlw.writeAttribute("numero", spaiati.lenght());
+			for (int i = 0; i< spaiati.lenght(); i++) {
+				xmlw.writeElement("codice");
+				xmlw.writeCharacters(spaiati.get(i));
+				xmlw.writeEndElement();
+			}
+			xmlw.writeEndElement();
+			xmlw.writeEndElement();
+			xmlw.writeEndDocument();
+			xmlw.flush();
+			xmlw.close();
+
+		} catch (Exception e) {
+			System.out.println("Errore nella scrittura");
+		}
+	}
+
 }
